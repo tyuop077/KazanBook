@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using KazanBook.Entities;
@@ -34,8 +33,7 @@ namespace KazanBook.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetById(Guid id)
         {
-            SqlDataReader reader = await db.SqlQueryReader($"SELECT id,name,slogan FROM Authors WHERE id = '{id.ToString().Replace("''","'")}'");
-            //Book book = await db.Books.FirstOrDefaultAsync(x => x.Id == id);
+            //using..;
             if (!reader.HasRows) { reader.Close(); return NotFound(); }
             await reader.ReadAsync();
             Author author = new Author

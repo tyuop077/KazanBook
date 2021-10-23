@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace KazanBook
+namespace KazanBook.DAL
 {
     public class db
     {
@@ -14,7 +13,8 @@ namespace KazanBook
             try
             {
                 await connection.OpenAsync();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("Couldn't connect to db");
                 throw e;
@@ -24,14 +24,6 @@ namespace KazanBook
             string booksCounter = await SqlQueryRead("SELECT COUNT(*) FROM Books");
             Console.WriteLine($"Authors: {authorsCounter}");
             Console.WriteLine($"Books: {booksCounter}");
-            if (authorsCounter == "0")
-            {
-
-            }
-            if (booksCounter == "0")
-            {
-
-            }
         }
         public static async Task<string> SqlQueryRead(string query)
         {
@@ -48,19 +40,5 @@ namespace KazanBook
             SqlCommand command = new SqlCommand(query, connection);
             return await command.ExecuteReaderAsync();
         }
-        /*static int FindUserByLogin(string login)
-        {
-            SqlCommand command = new SqlCommand("SELECT id,username,email,password FROM Users", connection);
-            SqlDataReader reader = command.ExecuteReader();
-            if (!reader.HasRows)
-            {
-                throw new Exception("Not found");
-            }
-            string id = reader.GetValue(0).ToString();
-            string username = reader.GetValue(1).ToString();
-            string email = reader.GetValue(2).ToString();
-            string password = reader.GetValue(3).ToString();
-            return -1;
-        }*/
     }
 }

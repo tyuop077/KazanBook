@@ -12,7 +12,7 @@
     "IIS Express": {
         "commandName": "IISExpress",
         "launchBrowser": true,
-        "launchUrl": "book",
+        "launchUrl": "book/0642F8A1-1248-445C-BEF2-09F16B5140D2",
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development"
         }
@@ -20,7 +20,7 @@
     "KazanBook": {
         "commandName": "Project",
         "launchBrowser": true,
-        "launchUrl": "book",
+        "launchUrl": "book/0642F8A1-1248-445C-BEF2-09F16B5140D2",
         "applicationUrl": "http://localhost:5000",
         "environmentVariables": {
             "ASPNETCORE_ENVIRONMENT": "Development"

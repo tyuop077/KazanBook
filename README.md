@@ -6,7 +6,7 @@
 
 ### KazanBook.API
 
-Client-side, what client would receive
+What client would receive
 
 ### KazanBook.BAL
 
