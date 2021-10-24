@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KazanBook.DAL
 {
-    class Response<T>
+    internal class Response<T>
     {
         Boolean success = false;
         T data;

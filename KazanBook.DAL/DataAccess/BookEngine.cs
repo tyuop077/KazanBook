@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using KazanBook.DAL.Entities;
 
-namespace KazanBook.DAL.Data
+namespace KazanBook.DAL.DataAccess
 {
-    class BookEngine
+    public class BookEngine
     {
-        public async Task<Response<List<Book>>> GetAll()
+        public static async Task<object> GetAllAsync()
         {
             List<Book> list = new List<Book>();
             using (SqlDataReader reader = await db.SqlQueryReader("SELECT id,title,authorid,tags FROM Books"))
@@ -34,7 +34,7 @@ namespace KazanBook.DAL.Data
             }
             return Response<List<Book>>.Success(list);
         }
-        public async Task<Response<Book>> GetById(string id) // assume it's getting Guid (we trust BAL, so we don't check if it's really Guid) and quote "'" checks
+        public static async Task<object> GetByIdAsync(string id) // assume it's getting Guid (we trust BAL, so we don't check if it's really Guid) and quote "'" checks
         {
             using (SqlDataReader reader = await db.SqlQueryReader($"SELECT id,title,authorid,tags FROM Books WHERE id = '{id}'"))
             {
@@ -57,7 +57,7 @@ namespace KazanBook.DAL.Data
                 return Response<Book>.Success(book);
             }
         }
-        public async Task<Response<string>> Create(object bookObject)
+        public static async Task<object> CreateAsync(object bookObject)
         {
             Book book = (Book)bookObject;
             string query = "INSERT INTO Books(id,title,authorid,tags)\n" +
@@ -65,7 +65,7 @@ namespace KazanBook.DAL.Data
             await db.SqlQueryRead(query);
             return Response<string>.Success();
         }
-        public async Task<Response<string>> Update(object bookObject)
+        public static async Task<object> UpdateAsync(object bookObject)
         {
             Book book = (Book)bookObject;
             List<string> statement = new List<string> { };
@@ -77,7 +77,7 @@ namespace KazanBook.DAL.Data
             }
             return Response<string>.Success();
         }
-        public async Task<Response<string>> Delete(string id) // Guid
+        public static async Task<object> DeleteAsync(string id) // Guid
         {
             using (SqlDataReader reader = await db.SqlQueryReader($"DELETE FROM Books WHERE id = '{id}'")) {
                 if (!reader.HasRows) return Response<string>.NotFound();
