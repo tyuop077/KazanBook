@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using KazanBook.BAL.Logic;
 using KazanBook.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,68 +15,43 @@ namespace KazanBook.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> GetAll()
         {
-            SqlDataReader reader = await db.SqlQueryReader("SELECT id,name,slogan FROM Authors");
-            //List<Book> books = reader.GetEnumerator().Select(r => new Book {}).ToList();
-            List<Author> list = new List<Author>();
-            while (await reader.ReadAsync()) // построчно считываем данные
-            {
-                Author book = new Author
-                {
-                    Id = Guid.Parse(reader.GetValue(0).ToString()),
-                    Name = reader.GetValue(1).ToString(),
-                    Slogan = reader.GetValue(2).ToString()
-                };
-                list.Add(book);
-            }
-            return list;
+            return (List<Author>)await AuthorLogic.GetAll();
+            //return JsonSerializer.Deserialize<List<Author>>(JsonSerializer.Serialize(await AuthorLogic.GetAll()));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetById(Guid id)
         {
-            //using..;
-            if (!reader.HasRows) { reader.Close(); return NotFound(); }
-            await reader.ReadAsync();
-            Author author = new Author
-            {
-                Id = Guid.Parse(reader.GetValue(0).ToString()),
-                Name = reader.GetValue(1).ToString(),
-                Slogan = reader.GetValue(2).ToString()
-            };
-            reader.Close();
-            return new ObjectResult(author);
+            return (Author)await AuthorLogic.GetById(id);
         }
         [HttpPut]
+        [HttpPost]
         public async Task<ActionResult> Create(string name, string slogan = "")
         {
-            string query = "INSERT INTO Authors(id,name,slogan)\n" +
-                $"values(NEWID(), '{name.Replace("'", "''")}', '{slogan.Replace("'", "''")}')";
-            await db.SqlQueryRead(query);
+            Author author = new Author()
+            {
+                Name = name,
+                Slogan = slogan
+            };
+            await AuthorLogic.Create(author);
             return Ok();
         }
         [HttpPatch("{id}")]
-        public async Task<ActionResult> Update(string id, string name = null, string slogan = null)
+        public async Task<ActionResult> Update(Guid id, string name = null, string slogan = null)
         {
-            List<string> statement = new List<string> { };
-            if (!(name is null))
+            Author author = new Author()
             {
-                statement.Add($"name = '{name.Replace("'", "''")}'");
-            }
-            if (!(slogan is null))
-            {
-                statement.Add($"slogan = '{slogan.Replace("'", "''")}'");
-            }
-            SqlDataReader reader = await db.SqlQueryReader($"UPDATE Authors SET {statement} WHERE id = '{id.Replace("'", "''")}'");
-            if (!reader.HasRows) { reader.Close(); return NotFound(); }
-            reader.Close();
+                Id = id,
+                Name = name,
+                Slogan = slogan
+            };
+            await AuthorLogic.Create(author);
             return Ok();
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            SqlDataReader reader = await db.SqlQueryReader($"DELETE FROM Authors WHERE id = '{id.Replace("'", "''")}'");
-            if (!reader.HasRows) { reader.Close(); return NotFound(); }
-            reader.Close();
+            await AuthorLogic.Delete(id);
             return Ok();
         }
     }

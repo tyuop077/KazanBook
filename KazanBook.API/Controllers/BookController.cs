@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using KazanBook.BAL.Logic;
 using KazanBook.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KazanBook.Controllers
@@ -12,65 +12,48 @@ namespace KazanBook.Controllers
     [Route("[controller]")]
     public class BookController : ControllerBase
     {
-        /*public void BooksContext(BooksContext context)
-        {
-            db = context;
-            if (!db.Books.Any())
-            {
-                db.Books.Add(new Book { Title = "Hello World" });
-                db.Books.Add(new Book { Title = "test" });
-                db.SaveChanges();
-            }
-        }*/
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Book>>> GetAll()
         {
-            //
-            return list;
+            return (List<Book>)await BookLogic.GetAll();
+            //return JsonSerializer.Deserialize<List<Book>>(JsonSerializer.Serialize(await BookLogic.GetAll()));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetById(Guid id)
         {
-            //
-            return new ObjectResult(book);
+            return (Book)await BookLogic.GetById(id);
         }
         [HttpPut]
+        [HttpPost]
         public async Task<ActionResult> Create(string title, Guid? authorid = null, string[] tags = null)
         {
-            string tagsStr = tags is null ? "" : String.Join(";", tags);
-            string authorIdStr = authorid is null ? "NULL" : $"'{authorid.ToString().Replace("'", "''")}'";
-            //string query = "INSERT INTO Books(id,title,authorid,tags)\n" +
-            //    $"values(NEWID(), '{title.Replace("'","''")}', {authorIdStr}, '{tagsStr.Replace("'", "''")}';";
-            //await db.SqlQueryRead(query);
+            Book book = new Book()
+            {
+                Title = title,
+                AuthorId = authorid,
+                Tags = tags
+            };
+            await BookLogic.Create(book);
             return Ok();
         }
         [HttpPatch("{id}")]
-        public async Task<ActionResult> Update(string id, string title = null, Guid? authorid = null, string[] tags = null)
+        public async Task<ActionResult> Update(Guid id, string title = null, Guid? authorid = null, string[] tags = null)
         {
-            List<string> statement = new List<string> { };
-            if (!(title is null))
+            Book book = new Book()
             {
-                statement.Add($"title = '{title.Replace("'", "''")}'");
-            }
-            // Обновляем authorId в любом случае, так как неизвестно начальное значение (сбрасываем ли бы его на null или устанавливаем новое)
-            string authorIdStr = authorid is null ? "NULL" : $"'{authorid.ToString().Replace("'", "''")}'";
-            statement.Add($"authorid = {authorIdStr}");
-            if (tags.Length > 0)
-            {
-                statement.Add($"tags = '{String.Join(';', tags).Replace("'", "''")}'");
-            }
-            SqlDataReader reader = await db.SqlQueryReader($"UPDATE Books SET {statement} WHERE id = '{id.Replace("'", "''")}'");
-            if (!reader.HasRows) { reader.Close(); return NotFound(); }
-            reader.Close();
+                Id = id,
+                Title = title,
+                AuthorId = authorid,
+                Tags = tags
+            };
+            await BookLogic.Create(book);
             return Ok();
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            SqlDataReader reader = await db.SqlQueryReader($"DELETE FROM Books WHERE id = '{id.Replace("'", "''")}'");
-            if (!reader.HasRows) { reader.Close(); return NotFound(); }
+            await BookLogic.Delete(id);
             return Ok();
         }
     }

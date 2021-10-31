@@ -21,16 +21,19 @@ namespace KazanBook
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            db.Initialize();
+            DAL.db.Initialize();
+            // ^ API would access only this DAL function as DAL would probably be on
+            // different server and be initialized on it's own somewhere.
+            // In out case, we have to initialize it there for it to work.
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseExceptionHandler("/error");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

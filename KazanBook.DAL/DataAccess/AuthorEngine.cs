@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading.Tasks;
 using KazanBook.DAL.Entities;
 
@@ -26,7 +25,7 @@ namespace KazanBook.DAL.DataAccess
             }
             return Response<List<Author>>.Success(list);
         }
-        public static async Task<object> GetByIdAsync(string id) // trust BAL
+        public static async Task<object> GetByIdAsync(Guid id)
         {
             using (SqlDataReader reader = await db.SqlQueryReader($"SELECT id,name,slogan FROM Authors WHERE id = '{id}'"))
             {
@@ -45,7 +44,7 @@ namespace KazanBook.DAL.DataAccess
         {
             Author author = (Author)authorObject;
             string query = "INSERT INTO Authors(id,name,slogan)\n" +
-                $"values(NEWID(), '{author.Name}', '{author.Slogan}')";
+                $"values(NEWID(), {author.Name}, {author.Slogan})";
             await db.SqlQueryRead(query);
             return Response<string>.Success();
         }
@@ -53,15 +52,15 @@ namespace KazanBook.DAL.DataAccess
         {
             Author author = (Author)authorObject;
             List<string> statement = new List<string> { };
-            if (!(author.Name is null)) statement.Add($"name = '{author.Name}'");
-            if (!(author.Slogan is null)) statement.Add($"slogan = '{author.Slogan}'");
+            if (!(author.Name is null)) statement.Add($"name = {author.Name}");
+            if (!(author.Slogan is null)) statement.Add($"slogan = {author.Slogan}");
             using (SqlDataReader reader = await db.SqlQueryReader($"UPDATE Authors SET {String.Join(", ", statement)} WHERE id = '{author.Id}'"))
             {
                 if (!reader.HasRows) return Response<string>.NotFound();
             }
             return Response<string>.Success();
         }
-        public static async Task<object> DeleteAsync(string id) // Guid
+        public static async Task<object> DeleteAsync(Guid id)
         {
             using (SqlDataReader reader = await db.SqlQueryReader($"DELETE FROM Authors WHERE id = '{id}'"))
             {
