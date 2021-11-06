@@ -2,10 +2,10 @@
 
 namespace KazanBook.DAL.Entities
 {
-    internal class Author
+    public class Author
     {
-        internal Guid Id { get; set; }
-        internal string Name { get; set; }
-        internal string Slogan { get; set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Slogan { get; set; }
     }
 }

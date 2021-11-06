@@ -1,51 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using KazanBook.BAL.Schema;
+using KazanBook.DAL;
 using KazanBook.DAL.DataAccess;
+using KazanBook.DAL.Entities;
 
 namespace KazanBook.BAL.Logic
 {
     public class BookLogic
     {
-        public static async Task<object> GetAll()
+        public static async Task<List<Book>> GetAll()
         {
-            Response<List<Book>> resp = Passer.Convert<Response<List<Book>>>(await BookEngine.GetAllAsync());
+            Response<List<Book>> resp = await BookEngine.GetAllAsync();
             return Passer.Pass(resp);
         }
-        public static async Task<object> GetById(Guid id)
+        public static async Task<Book> GetById(Guid id)
         {
-            Response<Book> resp = (Response<Book>)await BookEngine.GetByIdAsync(id);
+            Response<Book> resp = await BookEngine.GetByIdAsync(id);
             return Passer.Pass(resp);
         }
-        public static async Task<object> Create(object bookObject)
+        public static async Task<string> Create(Book book)
         {
-            Response<Book> newBookUnsecure = (Response<Book>)bookObject;
             Book newBook = new Book()
             {
-                Title = Passer.DBString(newBookUnsecure.data.Title),
-                AuthorId = newBookUnsecure.data.AuthorId,
-                Tags = Passer.DBArray(newBookUnsecure.data.Tags)
+                Title = Passer.DBString(book.Title),
+                AuthorId = book.AuthorId,
+                Tags = Passer.DBArray(book.Tags)
             };
-            Response<Book> resp = (Response<Book>)await BookEngine.CreateAsync(newBook);
+            Response<string> resp = await BookEngine.CreateAsync(newBook);
             return Passer.Pass(resp);
         }
-        public static async Task<object> Update(object bookObject)
+        public static async Task<string> Update(Book book)
         {
-            Response<Book> newBookUnsecure = (Response<Book>)bookObject;
             Book newBook = new Book()
             {
-                Id = newBookUnsecure.data.Id,
-                Title = Passer.DBString(newBookUnsecure.data.Title),
-                AuthorId = newBookUnsecure.data.AuthorId,
-                Tags = Passer.DBArray(newBookUnsecure.data.Tags)
+                Id = book.Id,
+                Title = Passer.DBString(book.Title),
+                AuthorId = book.AuthorId,
+                Tags = Passer.DBArray(book.Tags)
             };
-            Response<Book> resp = (Response<Book>)await BookEngine.CreateAsync(newBook);
+            Response<string> resp = await BookEngine.CreateAsync(newBook);
             return Passer.Pass(resp);
         }
-        public static async Task<object> Delete(Guid id)
+        public static async Task<string> Delete(Guid id)
         {
-            Response<Book> resp = (Response<Book>)await BookEngine.DeleteAsync(id);
+            Response<string> resp = await BookEngine.DeleteAsync(id);
             return Passer.Pass(resp);
         }
     }

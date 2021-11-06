@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using KazanBook.BAL.Logic;
-using KazanBook.Entities;
+using KazanBook.DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KazanBook.Controllers
@@ -15,7 +15,7 @@ namespace KazanBook.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Author>>> GetAll()
         {
-            return (List<Author>)await AuthorLogic.GetAll();
+            return await AuthorLogic.GetAll();
             //return JsonSerializer.Deserialize<List<Author>>(JsonSerializer.Serialize(await AuthorLogic.GetAll()));
         }
 

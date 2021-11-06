@@ -32,12 +32,13 @@ namespace KazanBook
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseExceptionHandler("/error");
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseExceptionHandler("/error");
 
             app.UseRouting();
 

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace KazanBook.DAL
 {
-    internal class Response<T>
+    public class Response<T>
     {
-        Boolean success = false;
-        T data;
-        string reason;
+        public Boolean success = false;
+        public T data;
+        public string reason;
         internal static Response<T> Success(T data = default(T))
         {
             Response<T> resp = new Response<T>();
@@ -24,6 +24,6 @@ namespace KazanBook.DAL
             resp.data = data;
             return resp;
         }
-        internal static Response<T> NotFound() => Fail("NotFound");
+        internal static Response<T> NotFound() => Fail("Not Found");
     }
 }

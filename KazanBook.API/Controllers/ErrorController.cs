@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -14,11 +15,14 @@ namespace KazanBook.Api.Controllers
     public class ErrorController : ControllerBase
     {
         [Route("error")]
-        public FailedResponse Error()
+        public ActionResult<FailedResponse> Error()
         {
             Exception exception = HttpContext.Features.Get<IExceptionHandlerFeature>().Error;
             if (exception is BAL.DALError)
             {
+                HttpContext.Response.StatusCode = 404;
+                //await HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new FailedResponse(exception.Message)));
+                //await JsonSerializer.SerializeAsync(HttpContext.Response.Body, new FailedResponse(exception.Message));
                 return new FailedResponse(exception.Message);
             }
             else
@@ -29,8 +33,8 @@ namespace KazanBook.Api.Controllers
     }
     public class FailedResponse
     {
-        public bool success = false;
-        public string reason;
+        public bool success { get; set; } = false;
+        public string reason { get; set; }
         public FailedResponse(string reason)
         {
             this.reason = reason;

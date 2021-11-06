@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using KazanBook.BAL.Schema;
+using KazanBook.DAL;
 
 namespace KazanBook.BAL
 {
     class Passer
     {
-        public static object Pass<T>(Response<T> resp)
+        public static T Pass<T>(Response<T> resp)
         {
             if (resp.success)
             {
@@ -34,10 +34,6 @@ namespace KazanBook.BAL
         public static string[] DBArray(string[] str)
         {
             return str.Select(tag => tag.Replace(";", "")).ToArray();
-        }
-        public static T Convert<T>(object obj)
-        {
-            return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(obj));
         }
     }
     public class DALError : Exception
